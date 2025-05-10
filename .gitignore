@@ -2,3 +2,5 @@ venv/
 chrome_pyflight/
 firefox_pyflight/
 **/__pycache__/
+found_a_bug_btw.png
+.VSCodeCounter/

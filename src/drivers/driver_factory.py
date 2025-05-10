@@ -13,8 +13,8 @@ def create_driver(browser=AllowedBrowsers.CHROME):
         options = ChromeOptions()
         # options.add_argument("user-data-dir=./chrome_pyflight")
         return webdriver.Chrome(options=options)
-    if browser == AllowedBrowsers.FIREFOX:
-        options = FirefoxOptions()
-        options.add_argument('-profile')
-        options.add_argument('./firefox_pyflight')
-        return webdriver.Firefox(options=options)
+    # if browser == AllowedBrowsers.FIREFOX:
+    #     options = FirefoxOptions()
+    #     options.add_argument('-profile')
+    #     options.add_argument('./firefox_pyflight')
+    #     return webdriver.Firefox(options=options)
