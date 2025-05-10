@@ -18,9 +18,9 @@ class ConsentPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
 
-    def click_reject(self):
+    def click_reject(self, min_delay, max_delay):
         """
         Clicks the reject button on the consent form.
         """
         button = self.wait.until(EC.element_to_be_clickable(ConsentLocators.REJECT_BUTTON))
-        ActionChains(self.driver).pause(random.uniform(1, 3)).click(button).perform()
+        ActionChains(self.driver).pause(random.uniform(min_delay, max_delay)).click(button).perform()
