@@ -63,22 +63,10 @@ class FlightDetails:
             airport_array[destination] = replacer(array)
         
         return airport_array
-
-    def find_number(self, text: str):
-        """
-        Find the first number in a string.
-        
-        Args:
-            text (str): The string to search.
-        Returns:
-            int: The first number found in the string, or None if no number is found.
-        """
-        result = re.search(r"Showing (\d+) nearby", text)
-        return int(result.group(1)) if result else None
     
     def process_airport_count(self, element: WebElement):
         parent = element.find_element(By.XPATH, "..").accessible_name
-        airport_count = self.find_number(element.get_attribute("textContent"))
+        airport_count = find_number(element.get_attribute("textContent"))
         return (parent, airport_count)
 
     def replace_range(self, source: list):
@@ -90,3 +78,14 @@ class FlightDetails:
 
         return _replacer
 
+def find_number(text: str):
+    """
+    Find the first number in a string.
+    
+    Args:
+        text (str): The string to search.
+    Returns:
+        int: The first number found in the string, or None if no number is found.
+    """
+    result = re.search(r"Showing (\d+) nearby", text)
+    return int(result.group(1)) if result else None
