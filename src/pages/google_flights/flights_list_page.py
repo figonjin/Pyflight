@@ -18,5 +18,12 @@ class FlightsList:
         self.iterator = 0
         self.wait = WebDriverWait(driver, 10)
     
+    def safe_find_all(self, locator, visible = False):
+        """Always fetch fresh elements, waiting for presence or visibility."""
+        if visible:
+            return self.wait.until(EC.visibility_of_all_elements_located(locator))
+        return self.wait.until(EC.presence_of_all_elements_located(locator))
+
     def expand_all(self):
-        pass
+        button = self.safe_find_all(MainLocators.MORE_FLIGHTS_BUTTON, True)
+        ActionChains(self.driver).move_to_element(button[0]).click(button[0]).perform()

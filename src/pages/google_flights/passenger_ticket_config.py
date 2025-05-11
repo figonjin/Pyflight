@@ -108,6 +108,7 @@ class PassengerTicketConfig:
         Selects the ticket type on the Google Flights page.
         :param ticket_type: The ticket type to select (0: Round Trip, 1: One Way, 2: Multi City).
         """
+        self.click_ticket_type()
         match ticket_type:
             case 0:
                 button = self.wait.until(EC.element_to_be_clickable(MainLocators.TICKET_TYPE_ROUND_TRIP))
@@ -119,11 +120,12 @@ class PassengerTicketConfig:
         ActionChains(self.driver).pause(random.uniform(self.min_action_delay, self.max_action_delay)).click(button).perform()
         self.wait.until(EC.invisibility_of_element_located(MainLocators.TICKET_TYPE_ROUND_TRIP))
 
-    def select_ticket_class(self, ticket_class: int):
+    def select_flight_class(self, ticket_class: int):
         """
         Selects the ticket class on the Google Flights page.
         :param ticket_class (int)
         """
+        self.click_flight_class()
         match ticket_class:
             case 0:
                 button = self.wait.until(EC.element_to_be_clickable(MainLocators.TICKET_CLASS_ECONOMY))
@@ -144,6 +146,7 @@ class PassengerTicketConfig:
         :param passenger_type: The type of passenger (0: Adult, 1: Child, 2: Infant Lap, 3: Infant Seat).
         :param amount: The amount of passengers to set.
         """
+        self.click_passenger_selection()
         amount = amount - 1 if passenger_type == 0 else amount
         match passenger_type:
             case 0:
