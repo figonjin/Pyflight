@@ -1,7 +1,3 @@
-Sure! Here's a clean and professional version of your README in proper Markdown formatting:
-
----
-
 # Pyflight
 
 **Pyflight** is a Python-based automation tool for fetching flight ticket information from **Google Flights**. It leverages **Selenium WebDriver** to interact with the website and enables users to search flights, configure travel preferences, and scrape flight details.
@@ -54,7 +50,7 @@ pyflight/
 1. **Clone the repository**:
 
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:figonjin/Pyflight.git
    cd pyflight
    ```
 
