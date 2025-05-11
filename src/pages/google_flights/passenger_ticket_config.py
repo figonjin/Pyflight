@@ -21,7 +21,7 @@ class PassengerTicketConfig:
         """
         Returns the ticket type and flight class buttons.
         """
-        ticket_type, flight_class = self.driver.find_elements(*MainLocators.TICKET_TYPE_FLIGHT_CLASS_BUTTONS[1])
+        ticket_type, flight_class = self.driver.find_elements(*MainLocators.TICKET_TYPE_FLIGHT_CLASS_BUTTONS)
         return (ticket_type, flight_class) if ticket_type and flight_class else (None, None)
 
     @property
@@ -144,6 +144,7 @@ class PassengerTicketConfig:
         :param passenger_type: The type of passenger (0: Adult, 1: Child, 2: Infant Lap, 3: Infant Seat).
         :param amount: The amount of passengers to set.
         """
+        amount = amount - 1 if passenger_type == 0 else amount
         match passenger_type:
             case 0:
                 buttons = self.adult_passenger_amount_buttons
