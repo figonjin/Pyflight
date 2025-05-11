@@ -1,3 +1,6 @@
+"""
+FlightDetails class for Google Flights
+"""
 import re
 import time
 from typing import Optional
@@ -16,7 +19,9 @@ from .main_locators import MainLocators
 
 
 class FlightDetails:
-
+    """
+    Page object for the Google Flights flight details page.
+    """
     def __init__(self, driver: Optional[WebDriver]):
         self.driver = driver
         self.min_action_delay = 0.5
@@ -31,55 +36,73 @@ class FlightDetails:
             return self.wait.until(EC.visibility_of_all_elements_located(locator))
         return self.wait.until(EC.presence_of_all_elements_located(locator))
 
-    def safe_input(self, field: WebElement, text: str):
-        if len(text) > 5:
-            text_initial = text[0:4] + text[-1]
-            text_inner = reversed(text[4:-1])
-            for char in text_initial:
-                self.actions.send_keys_to_element(field, char).perform()
-                time.sleep(0.000001)
-            for char in text_inner:
-                self.actions.send_keys_to_element(field, char).perform()
-        else:
-            for char in text:
-                self.actions.send_keys_to_element(field, char).perform()
+    def safe_input(self, text: str, destination: bool = True):
+        """
+        Safely inputs text into a flight search field.
+        Args:
+            text (str): The text to input.
+            destination (bool): Whether the input is for the destination field.
+        """
+        selector = "div[jscontroller][jsname][class] input[type='text'][aria-expanded='false'][value]"
+        if destination:
+            selector = selector[:-1] + "='']"
+        js_script = f'''
+        let input = document.querySelector("{selector}");
+        input.value = "{text}";
+        input.dispatchEvent(new Event('input', {{bubbles: true}}));
+        input.dispatchEvent(new Event('change', {{bubbles: true}}));
+        return input;
+        '''
+        self.driver.execute_script(js_script)
 
     def input_flight_source(self, source: str):
-        flight_source_field = self.safe_find_all(MainLocators.SOURCE_INPUT, True)[0]
-        self.actions.click(flight_source_field).pause(0.0005).send_keys(Keys.DELETE).perform()
-        flight_source_field.clear()
-
-        self.safe_input(flight_source_field, source)
-        time.sleep(0.1)
-        
+        """
+        Safely inputs text into the flight source field.
+        Args:
+            source (str): The source airport or city.
+        """
+        self.safe_input(source, False)
+        time.sleep(1)        
 
     def input_flight_destination(self, dest: str):
-        flight_destination_field = self.safe_find_all(MainLocators.DESTINATION_INPUT, True)[0]
-        self.actions.click(flight_destination_field).pause(0.0005).send_keys(Keys.DELETE).perform()
-        flight_destination_field.clear()
-
-        self.safe_input(flight_destination_field, dest)
-        time.sleep(0.1)
+        """
+        Safely inputs text into the flight destination field.
+        Args:
+            dest (str): The destination airport or city.
+        """
+        self.safe_input(dest)
+        time.sleep(1)
 
     def select_airport(self, airport: str):
+        """
+        Selects an airport from the dropdown list.
+        Args:
+            airport (str): The airport to select.
+        """
         all_airports = self.scrape_airports()
         for destinations, airports in all_airports.items():
+            if normalize(airport) in normalize(destinations):
+                time.sleep(0.1)
+                elements = self.safe_find_all(MainLocators.MAJOR_DESTINATIONS, True)
+                self.actions.click(elements[0]).perform()
+                time.sleep(0.5)
+                return
             if any(airport in item for item in airports):
                 elements = self.safe_find_all(MainLocators.AIRPORTS, True)
                 for element in elements:
                     selection = element.find_element(By.CSS_SELECTOR, "div[class][jsname]")
                     if airport in selection.text:
                         self.actions.move_to_element(selection).pause(1).click(selection).perform()
+                        time.sleep(0.5)
                         return
-            elif normalize(airport) in normalize(destinations):
-                elements = self.safe_find_all(MainLocators.MAJOR_DESTINATIONS, True)
-                self.actions.click(elements[0]).perform()
 
-
-    def scrape_ticket_prices(self):
-        ticket_prices = {}
 
     def scrape_airports(self):
+        """
+        Scrapes the airport data from the dropdown menu.
+        Returns:
+            dict: A dictionary with major destinations as keys and lists of airports as values.
+        """
         airport_array = {}
         major_destinations = [e.accessible_name for e in self.safe_find_all(MainLocators.MAJOR_DESTINATIONS, True)]
         for destination in major_destinations:
@@ -111,27 +134,60 @@ class FlightDetails:
         self.actions.send_keys(Keys.HOME).perform()
         return airport_array
     
-    def input_departure_arrival_date(self, date: str, departure: bool = True):
+    def input_departure_arrival_date(self, date_string: str, departure: bool = True):
+        """
+        Inputs a date into either departure or arrival field using JavaScript.
+        
+        Args:
+            date_string (str): Date in the format expected by the site (e.g., "MM/DD/YYYY")
+            departure (bool): Whether this is for departure (True) or return (False)
+        """
+        index = 0 if departure else 1
         fields = self.wait.until(EC.presence_of_all_elements_located(MainLocators.DEPARTURE_RETURN_INPUTS))
-        field = fields[0] if departure else fields[1]
+        field = fields[index]
+        
         self.actions.click(field).perform()
-        for char in date:
-            self.actions.send_keys_to_element(field, char).perform()
-        self.actions.send_keys_to_element(field, Keys.ENTER).perform()
+        time.sleep(0.5)
+        
+        js_script = f"""
+        arguments[0].value = '{date_string}';
+        arguments[0].dispatchEvent(new Event('input', {{bubbles: true}}));
+        arguments[0].dispatchEvent(new Event('change', {{bubbles: true}}));
+        """
+        self.driver.execute_script(js_script, field)
+        time.sleep(1)
+        field.send_keys(Keys.ENTER)
         buttons = self.safe_find_all(MainLocators.DONE_BUTTON, False)
         self.actions.click(buttons[-1]).perform()
+        time.sleep(0.5)
     
     def click_search(self):
+        """
+        Clicks the search button on the Google Flights page.
+        """
         button = self.safe_find_all(MainLocators.SEARCH_BUTTON)[0]
         self.actions.click(button).perform()
 
     def process_airport_count(self, element: WebElement):
+        """
+        Process the airport count from the element.
+        Args:
+            element (WebElement): The WebElement containing the airport count.
+        Returns:
+            tuple: A tuple containing the parent element's accessible name and the airport count.
+        """
         parent = element.find_element(By.XPATH, "..").accessible_name
         airport_count = find_number(element.get_attribute("textContent"))
         return (parent, airport_count)
 
     def replace_range(self, source: list):
-
+        """
+        Replace a range of elements in a list with another list.
+        Args:
+            source (list): The source list to replace elements from.
+        Returns:
+            function: A function that takes a target list and returns the replaced elements.
+        """
         def _replacer(target: list):
             result = source[self.iterator:self.iterator + len(target)]
             self.iterator += len(target)
@@ -151,7 +207,14 @@ def find_number(text: str):
     result = re.search(r"Showing (\d+) nearby", text)
     return int(result.group(1)) if result else None
 
-def normalize(text):
+def normalize(text: str):
+    """
+    Normalize the text by removing accents and replacing typographic dashes with a standard hyphen.
+    Args:
+        text (str): The string to normalize.
+    Returns:
+        str: The normalized string 
+    """
     # Normalize accents
     text = ''.join(
         c for c in unicodedata.normalize('NFD', text)

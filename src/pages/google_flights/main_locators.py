@@ -71,18 +71,13 @@ class MainLocators:
     # Flights
     TOP_FLIGHTS = (By.CSS_SELECTOR, "div h3 + div + ul")
     OTHER_FLIGHTS = (By.CSS_SELECTOR, "div h3 + ul") # target element 0
-    MORE_FLIGHTS_BUTTON = (By.CSS_SELECTOR, "div h3 + ul li[data-ved]")
+    TOP_MORE_FLIGHTS_BUTTON = (By.CSS_SELECTOR, "div h3 + div + ul li[data-ved]")
+    OTHER_MORE_FLIGHTS_BUTTON = (By.CSS_SELECTOR, "div h3 + ul li[data-ved]")
 
     #Flight details
     TOP_FLIGHT_TIMES = (By.CSS_SELECTOR, f"{TOP_FLIGHTS[1]} li span[jsslot] > span[aria-label] > span[aria-label][role='text']")
     TOP_FLIGHT_DURATIONS = (By.CSS_SELECTOR, f"{TOP_FLIGHTS[1]} li div[class] > div[class][aria-label]:not([tabindex])") # Every 4 elements (n + 4)
-    TOP_FLIGHT_STOPS = (By.CSS_SELECTOR, f"{TOP_FLIGHTS[1]} li div[class] > span[class][aria-label]") # Every 4 elements, starting from second ((n+1) + 4)
     TOP_FLIGHT_PRICES = (By.CSS_SELECTOR, f"{TOP_FLIGHTS[1]} li span[data-gs][aria-label][role='text']")
-    TOP_FLIGHT_PROVIDERS = (By.CSS_SELECTOR, f"{OTHER_FLIGHTS[1]} li div[class] > span:not([aria-label]):not([data-gs]):not([role]):not([aria-hidden]):not([class]):not([jsaction]):not([aria-label])") # Every 3 elements (n + 3)
-
-
     OTHER_FLIGHT_TIMES = (By.CSS_SELECTOR, f"{OTHER_FLIGHTS[1]} li span[jsslot] > span[aria-label] > span[aria-label][role='text']")
     OTHER_FLIGHT_DURATIONS = (By.CSS_SELECTOR, f"{OTHER_FLIGHTS[1]} li div[class] > div[class][aria-label]:not([tabindex])") # Every 4 elements (n + 4)
-    OTHER_FLIGHT_STOPS = (By.CSS_SELECTOR, f"{OTHER_FLIGHTS[1]} li div[class] > span[class][aria-label]") # Every 4 elements, starting from second ((n+1) + 4)
     OTHER_FLIGHT_PRICES = (By.CSS_SELECTOR, f"{OTHER_FLIGHTS[1]} li span[data-gs][aria-label][role='text']")
-    OTHER_FLIGHT_PROVIDERS = (By.CSS_SELECTOR, f"{OTHER_FLIGHTS[1]} li div[class] > span:not([aria-label]):not([data-gs]):not([role]):not([aria-hidden]):not([class]):not([jsaction]):not([aria-label])") # Every 3 elements (n + 3)

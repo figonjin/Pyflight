@@ -1,3 +1,6 @@
+"""
+Passenger and Ticket Configuration Page Object for Google Flights
+"""
 import random
 from typing import Optional
 
@@ -10,6 +13,9 @@ from .main_locators import MainLocators
 
 
 class PassengerTicketConfig:
+    """
+    Page object for the Google Flights passenger and ticket configuration page.
+    """
     def __init__(self, driver: Optional[WebDriver]):
         self.driver = driver
         self.min_action_delay = 0.5
