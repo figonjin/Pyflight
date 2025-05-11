@@ -110,6 +110,7 @@ This will:
 * Google Flights UI changes may break some element locators over time.
 * Occasional random index errors, timeouts and others due to Google's DOM manipulation during runtime
 * If the search result doesn't find any flights due to user settings, the program will crash
+* Sometimes, the button for expanding available flights gets pressed too early, proceeding to return flights and breaking the logic
 ---
 
 ## 🤝 Potential Improvements
