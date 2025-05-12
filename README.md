@@ -18,8 +18,6 @@
 
 ```
 pyflight/
-├── chrome_pyflight/          # Chrome user data (ignored by .gitignore)
-├── firefox_pyflight/         # Firefox user data (ignored by .gitignore)
 ├── src/
 │   ├── drivers/
 │   │   └── driver_factory.py         # Factory for creating WebDriver instances
